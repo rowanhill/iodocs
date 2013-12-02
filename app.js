@@ -34,7 +34,6 @@ var express     = require('express'),
     url         = require('url'),
     http        = require('http'),
     https       = require('https'),
-    crypto      = require('crypto'),
     redis       = require('redis'),
     RedisStore  = require('connect-redis')(express);
 
@@ -783,23 +782,6 @@ function processRequest(req, res, next) {
             options.path += apiConfig.keyParam + '=' + apiKey;
         }
 
-        // Perform signature routine, if any.
-        if (apiConfig.signature) {
-            var timeStamp, sig;
-            if (apiConfig.signature.type == 'signed_md5') {
-                // Add signature parameter
-                timeStamp = Math.round(new Date().getTime()/1000);
-                sig = crypto.createHash('md5').update('' + apiKey + apiSecret + timeStamp + '').digest(apiConfig.signature.digest);
-                options.path += '&' + apiConfig.signature.sigParam + '=' + sig;
-            }
-            else if (apiConfig.signature.type == 'signed_sha256') { // sha256(key+secret+epoch)
-                // Add signature parameter
-                timeStamp = Math.round(new Date().getTime()/1000);
-                sig = crypto.createHash('sha256').update('' + apiKey + apiSecret + timeStamp + '').digest(apiConfig.signature.digest);
-                options.path += '&' + apiConfig.signature.sigParam + '=' + sig;
-            }
-        }
-
         // Setup headers, if any
         if (reqQuery.headerNames && reqQuery.headerNames.length > 0) {
             if (config.debug) {
@@ -846,6 +828,25 @@ function processRequest(req, res, next) {
         } else {
             console.log('Protocol: HTTP');
             doRequest = http.request;
+        }
+
+        // Perform signature routine, if any.
+        if (apiConfig.signature) {
+            var signerModuleName = null;
+            if (fs.existsSync(path.join('./signers', apiConfig.signature.type + '.js'))) {
+                signerModuleName = './signers/' + apiConfig.signature.type + '.js';
+            }
+
+            if (signerModuleName != null) {
+                var signer = require(signerModuleName);
+                if (signer.signRequest) {
+                    signer.signRequest(httpMethod, url, requestBody, options, apiKey, apiSecret, apiConfig.signature);
+                } else {
+                    console.error('Signer "' + apiConfig.signature.type + '" does not have a signRequest() method');
+                }
+            } else {
+                console.error('Could not find signer "' + apiConfig.signature.type + '"');
+            }
         }
 
         // API Call. response is the response from the API, res is the response we will send back to the user.

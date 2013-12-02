@@ -288,11 +288,12 @@ Line:
     (5) is set to "key"
 
 8. "signature" is a JSON object that contains the details about
-   the API call signing requirements. The signature routine coded
-   in app.js is a hash of the string concatenation of API key, 
+   the API call signing requirements. The bundled signature
+   routines create a hash of the string concatenation of API key,
    API key secret and timestamp (epoch).
 
-9. "type" key value is either *signed_md5* or *signed_sha256*.
+9. "type" key value is a module in the `signers` directory. By
+   default this is either *signed_md5* or *signed_sha256*.
    More signature methods are available with crypto.js, but have
    not been included in the code as options.
 
