@@ -77,6 +77,14 @@ if (!fs.existsSync(config.apiConfigDir)) {
     process.exit(1);
 }
 
+if (config.customSignersDir) {
+    config.customSignersDir = path.resolve(config.customSignersDir);
+    if (!fs.existsSync(config.customSignersDir)) {
+        console.error("Could not find custom request signers directory: " + config.customSignersDir);
+        process.exit(1);
+    }
+}
+
 try {
     var apisConfig = require(path.join(config.apiConfigDir, 'apiconfig.json'));
     if (config.debug) {
@@ -833,7 +841,9 @@ function processRequest(req, res, next) {
         // Perform signature routine, if any.
         if (apiConfig.signature) {
             var signerModuleName = null;
-            if (fs.existsSync(path.join('./signers', apiConfig.signature.type + '.js'))) {
+            if (fs.existsSync(path.join(config.customSignersDir, apiConfig.signature.type + '.js'))) {
+                signerModuleName = config.customSignersDir + '/' + apiConfig.signature.type + '.js';
+            } else if (fs.existsSync(path.join('./signers', apiConfig.signature.type + '.js'))) {
                 signerModuleName = './signers/' + apiConfig.signature.type + '.js';
             }
 

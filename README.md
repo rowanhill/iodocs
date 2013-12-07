@@ -292,8 +292,9 @@ Line:
    routines create a hash of the string concatenation of API key,
    API key secret and timestamp (epoch).
 
-9. "type" key value is a module in the `signers` directory. By
-   default this is either *signed_md5* or *signed_sha256*.
+9. "type" key value is a module in the `signers` directory, or in
+   the directory specified by `customSignersDir` in config.json.
+   By default this is either *signed_md5* or *signed_sha256*.
    More signature methods are available with crypto.js, but have
    not been included in the code as options.
 
