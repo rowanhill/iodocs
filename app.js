@@ -35,9 +35,9 @@ var express     = require('express'),
     http        = require('http'),
     https       = require('https'),
     crypto      = require('crypto'),
-    redis       = require('redis'),
     RedisStore  = require('connect-redis')(express),
-    apiConfigLoader = require('./src/apiConfigLoader.js');
+    apiConfigLoader = require('./src/apiConfigLoader.js'),
+    redisSetup = require('./src/redisSetup.js');
 
 // Configuration
 try {
@@ -50,24 +50,7 @@ try {
 //
 // Redis connection
 //
-var defaultDB = '0';
-config.redis.database = config.redis.database || defaultDB;
-
-if (process.env.REDISTOGO_URL) {
-    var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-    config.redis.host = rtg.hostname;
-    config.redis.port = rtg.port;
-    config.redis.password = rtg.auth.split(":")[1];
-}
-
-var db = redis.createClient(config.redis.port, config.redis.host);
-db.auth(config.redis.password);
-
-db.on("error", function(err) {
-    if (config.debug) {
-         console.log("Error " + err);
-    }
-});
+var db = redisSetup.configure(config.redis);
 
 //
 // Load API Configs
