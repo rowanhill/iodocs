@@ -1,0 +1,11 @@
+{
+    "simple": {
+        "name": "Simple",
+        "protocol": "http",
+        "baseURL": "localhost:3001",
+        "publicPath": "/",
+        "headers" : {},
+        "auth": "",
+        "keyParam": "key"
+    }
+}

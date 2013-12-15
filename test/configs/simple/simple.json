@@ -1,0 +1,25 @@
+{
+    "endpoints":[
+        {
+            "name": "CRUD operations",
+            "methods": [
+                {
+                    "MethodName":"Get some resource by ID",
+                    "Synopsis":"Lorem ipsum dolor sit amet",
+                    "HTTPMethod":"GET",
+                    "URI":"/resources/:id",
+                    "RequiresOAuth":"N",
+                    "parameters":[
+                        {
+                            "Name":"id",
+                            "Required":"Y",
+                            "Default":"",
+                            "Type":"string",
+                            "Description":"A resource ID (e.g. 500042487)"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
