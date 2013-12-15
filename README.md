@@ -34,7 +34,7 @@ INSTALLATION INSTRUCTIONS FOR I/O DOCS
 From the command line type in:
 <pre>  git clone http://github.com/mashery/iodocs.git
   cd iodocs
-  npm install
+  npm install --production
 </pre>
 
 

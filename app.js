@@ -36,7 +36,8 @@ var express     = require('express'),
     https       = require('https'),
     crypto      = require('crypto'),
     redis       = require('redis'),
-    RedisStore  = require('connect-redis')(express);
+    RedisStore  = require('connect-redis')(express),
+    apiConfigLoader = require('./src/apiConfigLoader.js');
 
 // Configuration
 try {
@@ -71,20 +72,10 @@ db.on("error", function(err) {
 //
 // Load API Configs
 //
-
-config.apiConfigDir = path.resolve(config.apiConfigDir || 'public/data');
-if (!fs.existsSync(config.apiConfigDir)) {
-    console.error("Could not find API config directory: " + config.apiConfigDir);
-    process.exit(1);
-}
-
 try {
-    var apisConfig = require(path.join(config.apiConfigDir, 'apiconfig.json'));
-    if (config.debug) {
-        console.log(util.inspect(apisConfig));
-    }
-} catch(e) {
-    console.error("File apiconfig.json not found or is invalid.");
+    var apisConfig = apiConfigLoader.load(config);
+} catch (e) {
+    console.error(e.message);
     process.exit(1);
 }
 

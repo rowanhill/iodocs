@@ -31,7 +31,11 @@
     "querystring": "0.1.0",
     "supervisor": ">= 0.5.x"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~1.15.1",
+    "should": "~2.1.1",
+    "sinon": "~1.7.3"
+  },
   "main": "index",
   "engines": {
     "node": ">= 0.4.0",
@@ -39,6 +43,7 @@
   },
   "scripts": {
     "start": "node_modules/.bin/supervisor -e 'js|json' app",
-    "startwin": "supervisor -e 'js' app"
+    "startwin": "supervisor -e 'js' app",
+    "test": "node_modules/.bin/mocha --ui bdd --reporter spec"
   }
 }
